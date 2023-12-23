@@ -1,16 +1,16 @@
+import domain.Customer;
 import domain.Order;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class App {
-    List<Order> restarauntOrders = RestaurantOrders.read("orders_100.json").getOrders();
+    List<Order> restaurantOrders = RestaurantOrders.read("orders_100.json").getOrders();
 
     public App() {
 //        System.out.println("----- Все заказы -----");
-//        restarauntOrders.forEach(System.out::println);
+//        restaurantOrders.forEach(System.out::println);
 //        System.out.println("----------------------");
 //        System.out.println("------ Топ заказов по общему чеку -----");
 //        getTheBiggestOrders(5).forEach(System.out::println);
@@ -30,27 +30,27 @@ public class App {
 //        System.out.println("--  Ищем заказы в определенном ценовом диапазоне  --");
 //        getOrdersInRange(1,10).forEach(System.out::println);
 //        System.out.println("----------------------------------------------------");
-        System.out.println("--  Получаем общую сумму заказов  --");
-        System.out.println("Общая сумма заказов: $" + Math.round(getTotalSumOfOrders()));
-        System.out.println("------------------------------------");
+//        System.out.println("--- Уникальные e-mail клиентов ---");
+//        getCustomersEmails().forEach(System.out::println);
+//        System.out.println("----------------------------------");
     }
 
     public List<Order> getTheBiggestOrders(int numberOfOrders) {
-        return restarauntOrders.stream()
+        return restaurantOrders.stream()
                 .sorted(Comparator.comparing(Order::getTotal).reversed())
                 .limit(numberOfOrders)
                 .collect(Collectors.toList());
     }
 
     public List<Order> getTheSmallestOrders(int numberOfOrders) {
-        return restarauntOrders.stream()
+        return restaurantOrders.stream()
                 .sorted(Comparator.comparing(Order::getTotal))
                 .limit(numberOfOrders)
                 .collect(Collectors.toList());
     }
 
     public List<Order> getDeliveryOrders() {
-        return restarauntOrders.stream()
+        return restaurantOrders.stream()
                 .filter(Order::isHomeDelivery)
                 .collect(Collectors.toList());
     }
@@ -68,7 +68,7 @@ public class App {
     }
 
     public List<Order> getOrdersInRange(int minOrderTotal, int maxOrderTotal) {
-        return restarauntOrders.stream()
+        return restaurantOrders.stream()
                 .sorted(Comparator.comparingDouble(Order::getTotal))
                 .dropWhile(o -> o.getTotal() < minOrderTotal)
                 .takeWhile(o -> o.getTotal() < maxOrderTotal)
@@ -76,8 +76,16 @@ public class App {
     }
 
     public double getTotalSumOfOrders(){
-        return restarauntOrders.stream()
+        return restaurantOrders.stream()
                 .mapToDouble(Order::getTotal)
                 .sum();
+    }
+
+    public List<String> getCustomersEmails (){
+        return restaurantOrders.stream()
+                .map(Order::getCustomer)
+                .map(Customer::getEmail)
+                .distinct()
+                .collect(Collectors.toList());
     }
 }
