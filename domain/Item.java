@@ -52,6 +52,8 @@ public class Item {
     public String getType() {
         return type;
     }
+
+
     // Этот блок кода менять нельзя! КОНЕЦ!
 
     //----------------------------------------------------------------------
@@ -59,4 +61,8 @@ public class Item {
     //----------------------------------------------------------------------
 
 
+    @Override
+    public String toString() {
+        return String.format("%nName: %s%nPrice: %s%nType: %s%nAmount: %s%n", name, price, type, amount);
+    }
 }

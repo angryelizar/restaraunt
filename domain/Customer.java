@@ -40,4 +40,8 @@ public class Customer {
     //----------------------------------------------------------------------
 
 
+    @Override
+    public String toString() {
+        return String.format("%s%nE-mail: %s", fullName, email);
+    }
 }

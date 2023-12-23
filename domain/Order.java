@@ -3,7 +3,7 @@ package domain;
 import java.util.List;
 import java.util.Objects;
 
-import util.NotImplementedException;
+import static java.util.Arrays.stream;
 
 public class Order {
     // Этот блок кода менять нельзя! НАЧАЛО!
@@ -54,6 +54,13 @@ public class Order {
     //----------------------------------------------------------------------
 
     public void calculateTotal() {
-        throw new NotImplementedException("Вам надо реализовать этот метод!");
+        this.total = items.stream()
+                .mapToDouble(item -> item.getPrice() * item.getAmount())
+                .sum();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Customer: %s%nItems: %s%nTotal: %s%nDelivery: %s%n", customer, items, Math.round(total), homeDelivery);
     }
 }
