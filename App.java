@@ -1,8 +1,10 @@
 import domain.Customer;
+import domain.Item;
 import domain.Order;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class App {
@@ -33,6 +35,7 @@ public class App {
 //        System.out.println("--- Уникальные e-mail клиентов ---");
 //        getCustomersEmails().forEach(System.out::println);
 //        System.out.println("----------------------------------");
+        groupingByCustomer();
     }
 
     public List<Order> getTheBiggestOrders(int numberOfOrders) {
@@ -87,5 +90,12 @@ public class App {
                 .map(Customer::getEmail)
                 .distinct()
                 .collect(Collectors.toList());
+    }
+
+    public void groupingByCustomer() {
+        var customersAndOrders = restaurantOrders.stream()
+                .collect(Collectors.groupingBy(Order::getCustomer,
+                        Collectors.mapping(Order::getItems, Collectors.toList())));
+        System.out.println(customersAndOrders);
     }
 }
