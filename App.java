@@ -27,9 +27,12 @@ public class App {
 //        System.out.println("- Самый маленький заказ на дом -");
 //        getDeliverySmallestOrder().forEach(System.out::println);
 //        System.out.println("--------------------------------------");
-        System.out.println("--  Ищем заказы в определенном ценовом диапазоне  --");
-        getOrdersInRange(1,10).forEach(System.out::println);
-        System.out.println("----------------------------------------------------");
+//        System.out.println("--  Ищем заказы в определенном ценовом диапазоне  --");
+//        getOrdersInRange(1,10).forEach(System.out::println);
+//        System.out.println("----------------------------------------------------");
+        System.out.println("--  Получаем общую сумму заказов  --");
+        System.out.println("Общая сумма заказов: $" + Math.round(getTotalSumOfOrders()));
+        System.out.println("------------------------------------");
     }
 
     public List<Order> getTheBiggestOrders(int numberOfOrders) {
@@ -67,9 +70,14 @@ public class App {
     public List<Order> getOrdersInRange(int minOrderTotal, int maxOrderTotal) {
         return restarauntOrders.stream()
                 .sorted(Comparator.comparingDouble(Order::getTotal))
-                .dropWhile(o -> o.getTotal() <= minOrderTotal)
-                .takeWhile(o -> o.getTotal() <= maxOrderTotal)
+                .dropWhile(o -> o.getTotal() < minOrderTotal)
+                .takeWhile(o -> o.getTotal() < maxOrderTotal)
                 .collect(Collectors.toList());
     }
 
+    public double getTotalSumOfOrders(){
+        return restarauntOrders.stream()
+                .mapToDouble(Order::getTotal)
+                .sum();
+    }
 }

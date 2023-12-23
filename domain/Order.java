@@ -61,6 +61,6 @@ public class Order {
 
     @Override
     public String toString() {
-        return String.format("Customer: %s%nItems: %s%nTotal: %s%nDelivery: %s%n", customer, items, Math.round(total), homeDelivery);
+        return String.format("Customer: %s%nItems: %s%nTotal: $%s%nDelivery: %s%n", customer, items, Math.round(total), homeDelivery);
     }
 }
