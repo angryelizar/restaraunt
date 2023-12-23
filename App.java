@@ -20,14 +20,16 @@ public class App {
 //        System.out.println("-----------------------------------");
 //        System.out.println("------ Заказы с доставкой на дом -----");
 //        getDeliveryOrders().forEach(System.out::println);
-//        System.out.println(getDeliveryOrders().size());
 //        System.out.println("--------------------------------------");
-        System.out.println("--  Самый дорогой заказ на дом  --");
-        getDeliveryTopOrder().forEach(System.out::println);
-        System.out.println("--------------------------------------");
-        System.out.println("- Самый маленький заказ на дом -");
-        getDeliverySmallestOrder().forEach(System.out::println);
-        System.out.println("--------------------------------------");
+//        System.out.println("--  Самый дорогой заказ на дом  --");
+//        getDeliveryTopOrder().forEach(System.out::println);
+//        System.out.println("--------------------------------------");
+//        System.out.println("- Самый маленький заказ на дом -");
+//        getDeliverySmallestOrder().forEach(System.out::println);
+//        System.out.println("--------------------------------------");
+        System.out.println("--  Ищем заказы в определенном ценовом диапазоне  --");
+        getOrdersInRange(1,10).forEach(System.out::println);
+        System.out.println("----------------------------------------------------");
     }
 
     public List<Order> getTheBiggestOrders(int numberOfOrders) {
@@ -60,6 +62,14 @@ public class App {
         return getDeliveryOrders().stream()
                 .min(Comparator.comparingDouble(Order::getTotal))
                 .stream().collect(Collectors.toList());
+    }
+
+    public List<Order> getOrdersInRange(int minOrderTotal, int maxOrderTotal) {
+        return restarauntOrders.stream()
+                .sorted(Comparator.comparingDouble(Order::getTotal))
+                .dropWhile(o -> o.getTotal() <= minOrderTotal)
+                .takeWhile(o -> o.getTotal() <= maxOrderTotal)
+                .collect(Collectors.toList());
     }
 
 }
