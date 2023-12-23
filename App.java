@@ -32,10 +32,18 @@ public class App {
 //        System.out.println("--  Ищем заказы в определенном ценовом диапазоне  --");
 //        getOrdersInRange(1,10).forEach(System.out::println);
 //        System.out.println("----------------------------------------------------");
+        System.out.println("------------  Общая сумма заказов  -------------------");
+        System.out.println("$"+ Math.round(getTotalSumOfOrders()));
+        System.out.println("----------------------------------------------------");
 //        System.out.println("--- Уникальные e-mail клиентов ---");
 //        getCustomersEmails().forEach(System.out::println);
 //        System.out.println("----------------------------------");
-        groupingByCustomer();
+//        System.out.println("--- Уникальные клиенты и их заказы ---");
+//        getGroupingOrdersByCustomer();
+//        System.out.println("--------------------------------------");
+        System.out.println("--- Уникальные клиенты и общая сумма их заказов ---");
+        getCustomersAndTotalSum();
+        System.out.println("---------------------------------------------------");
     }
 
     public List<Order> getTheBiggestOrders(int numberOfOrders) {
@@ -78,13 +86,13 @@ public class App {
                 .collect(Collectors.toList());
     }
 
-    public double getTotalSumOfOrders(){
+    public double getTotalSumOfOrders() {
         return restaurantOrders.stream()
                 .mapToDouble(Order::getTotal)
                 .sum();
     }
 
-    public List<String> getCustomersEmails (){
+    public List<String> getCustomersEmails() {
         return restaurantOrders.stream()
                 .map(Order::getCustomer)
                 .map(Customer::getEmail)
@@ -92,10 +100,18 @@ public class App {
                 .collect(Collectors.toList());
     }
 
-    public void groupingByCustomer() {
+    public void getGroupingOrdersByCustomer() {
         var customersAndOrders = restaurantOrders.stream()
                 .collect(Collectors.groupingBy(Order::getCustomer,
                         Collectors.mapping(Order::getItems, Collectors.toList())));
         System.out.println(customersAndOrders);
+    }
+
+    public void getCustomersAndTotalSum() {
+        var customersAndTotalSum = restaurantOrders.stream()
+                .collect(Collectors.groupingBy(Order::getCustomer,
+                        Collectors.summingDouble(Order::getTotal)));
+
+        System.out.println(customersAndTotalSum);
     }
 }
