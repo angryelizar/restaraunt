@@ -48,6 +48,9 @@ public class App {
 //        System.out.println("---  Находим заказчика с самым маленьким чеком  ---");
 //        getCustomerWithSmallestSum();
 //        System.out.println("---------------------------------------------------");
+//        System.out.println("------- Товары и их количество продаж ------");
+//        getItemsAndCountOfSales();
+//        System.out.println("--------------------------------------------");
     }
 
     public List<Order> getTheBiggestOrders(int numberOfOrders) {
@@ -156,4 +159,14 @@ public class App {
                 .orElse(null);
         System.out.println(result);
     }
+
+    public void getItemsAndCountOfSales() {
+        var soldItems = restaurantOrders.stream()
+                .flatMap(m -> m.getItems().stream())
+                .collect(Collectors.toList());
+        var result = soldItems.stream()
+                        .collect(Collectors.groupingBy(Item::getName, Collectors.summingInt(Item::getAmount)));
+        System.out.println(result);
+    }
+
 }
