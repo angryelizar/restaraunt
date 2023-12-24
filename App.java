@@ -2,9 +2,7 @@ import domain.Customer;
 import domain.Item;
 import domain.Order;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class App {
@@ -32,17 +30,20 @@ public class App {
 //        System.out.println("--  Ищем заказы в определенном ценовом диапазоне  --");
 //        getOrdersInRange(1,10).forEach(System.out::println);
 //        System.out.println("----------------------------------------------------");
-        System.out.println("------------  Общая сумма заказов  -------------------");
-        System.out.println("$"+ Math.round(getTotalSumOfOrders()));
-        System.out.println("----------------------------------------------------");
+//        System.out.println("------------  Общая сумма заказов  -------------------");
+//        System.out.println("$" + Math.round(getTotalSumOfOrders()));
+//        System.out.println("----------------------------------------------------");
 //        System.out.println("--- Уникальные e-mail клиентов ---");
 //        getCustomersEmails().forEach(System.out::println);
 //        System.out.println("----------------------------------");
 //        System.out.println("--- Уникальные клиенты и их заказы ---");
 //        getGroupingOrdersByCustomer();
 //        System.out.println("--------------------------------------");
-        System.out.println("--- Уникальные клиенты и общая сумма их заказов ---");
-        getCustomersAndTotalSum();
+//        System.out.println("--- Уникальные клиенты и общая сумма их заказов ---");
+//        getCustomersAndTotalSum();
+//        System.out.println("---------------------------------------------------");
+        System.out.println("---   Находим заказчика с самым большим чеком   ---");
+        getCustomerWithBiggestSum();
         System.out.println("---------------------------------------------------");
     }
 
@@ -113,5 +114,24 @@ public class App {
                         Collectors.summingDouble(Order::getTotal)));
 
         System.out.println(customersAndTotalSum);
+    }
+
+    public void getCustomerWithBiggestSum() {
+        var customersAndTotalSum = restaurantOrders.stream()
+                .collect(Collectors.groupingBy(Order::getCustomer,
+                        Collectors.summingDouble(Order::getTotal)));
+        var keysAndValues = customersAndTotalSum.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
+        var result = keysAndValues.entrySet().stream()
+                .reduce((first, second) -> second)
+                .orElse(null);
+        System.out.println(result);
     }
 }
