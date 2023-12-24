@@ -42,9 +42,12 @@ public class App {
 //        System.out.println("--- Уникальные клиенты и общая сумма их заказов ---");
 //        getCustomersAndTotalSum();
 //        System.out.println("---------------------------------------------------");
-        System.out.println("---   Находим заказчика с самым большим чеком   ---");
-        getCustomerWithBiggestSum();
-        System.out.println("---------------------------------------------------");
+//        System.out.println("---   Находим заказчика с самым большим чеком   ---");
+//        getCustomerWithBiggestSum();
+//        System.out.println("---------------------------------------------------");
+//        System.out.println("---  Находим заказчика с самым маленьким чеком  ---");
+//        getCustomerWithSmallestSum();
+//        System.out.println("---------------------------------------------------");
     }
 
     public List<Order> getTheBiggestOrders(int numberOfOrders) {
@@ -131,6 +134,25 @@ public class App {
                 ));
         var result = keysAndValues.entrySet().stream()
                 .reduce((first, second) -> second)
+                .orElse(null);
+        System.out.println(result);
+    }
+
+    public void getCustomerWithSmallestSum() {
+        var customersAndTotalSum = restaurantOrders.stream()
+                .collect(Collectors.groupingBy(Order::getCustomer,
+                        Collectors.summingDouble(Order::getTotal)));
+        var keysAndValues = customersAndTotalSum.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
+        var result = keysAndValues.entrySet().stream()
+                .findFirst()
                 .orElse(null);
         System.out.println(result);
     }
