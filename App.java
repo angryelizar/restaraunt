@@ -9,6 +9,7 @@ public class App {
     List<Order> restaurantOrders = RestaurantOrders.read("orders_100.json").getOrders();
 
     public App() {
+//        Задание 1
 //        System.out.println("----- Все заказы -----");
 //        restaurantOrders.forEach(System.out::println);
 //        System.out.println("----------------------");
@@ -36,20 +37,27 @@ public class App {
 //        System.out.println("--- Уникальные e-mail клиентов ---");
 //        getCustomersEmails().forEach(System.out::println);
 //        System.out.println("----------------------------------");
+//
+//        Задание 2
 //        System.out.println("--- Уникальные клиенты и их заказы ---");
-//        getGroupingOrdersByCustomer();
+//        System.out.println(getGroupingOrdersByCustomer());
 //        System.out.println("--------------------------------------");
 //        System.out.println("--- Уникальные клиенты и общая сумма их заказов ---");
-//        getCustomersAndTotalSum();
+//        System.out.println(getCustomersAndTotalSum());
 //        System.out.println("---------------------------------------------------");
 //        System.out.println("---   Находим заказчика с самым большим чеком   ---");
-//        getCustomerWithBiggestSum();
+//        System.out.println(getCustomerWithBiggestSum());
 //        System.out.println("---------------------------------------------------");
 //        System.out.println("---  Находим заказчика с самым маленьким чеком  ---");
-//        getCustomerWithSmallestSum();
+//        System.out.println(getCustomerWithSmallestSum());
 //        System.out.println("---------------------------------------------------");
 //        System.out.println("------- Товары и их количество продаж ------");
-//        getItemsAndCountOfSales();
+//        System.out.println(getItemsAndCountOfSales());
+//        System.out.println("--------------------------------------------");
+//
+//        Бонус
+//        System.out.println("------- Товары и клиенты (их почтовые адреса) которые заказывали его ------");
+//        System.out.println(getEmailsByItems());
 //        System.out.println("--------------------------------------------");
     }
 
@@ -107,22 +115,19 @@ public class App {
                 .collect(Collectors.toList());
     }
 
-    public void getGroupingOrdersByCustomer() {
-        var customersAndOrders = restaurantOrders.stream()
+    public Map<Customer, List<List<Item>>> getGroupingOrdersByCustomer() {
+        return restaurantOrders.stream()
                 .collect(Collectors.groupingBy(Order::getCustomer,
                         Collectors.mapping(Order::getItems, Collectors.toList())));
-        System.out.println(customersAndOrders);
     }
 
-    public void getCustomersAndTotalSum() {
-        var customersAndTotalSum = restaurantOrders.stream()
+    public Map<Customer, Double> getCustomersAndTotalSum() {
+        return restaurantOrders.stream()
                 .collect(Collectors.groupingBy(Order::getCustomer,
                         Collectors.summingDouble(Order::getTotal)));
-
-        System.out.println(customersAndTotalSum);
     }
 
-    public void getCustomerWithBiggestSum() {
+    public Map.Entry<Customer, Double> getCustomerWithBiggestSum() {
         var customersAndTotalSum = restaurantOrders.stream()
                 .collect(Collectors.groupingBy(Order::getCustomer,
                         Collectors.summingDouble(Order::getTotal)));
@@ -135,13 +140,12 @@ public class App {
                         (e1, e2) -> e1,
                         LinkedHashMap::new
                 ));
-        var result = keysAndValues.entrySet().stream()
+        return keysAndValues.entrySet().stream()
                 .reduce((first, second) -> second)
                 .orElse(null);
-        System.out.println(result);
     }
 
-    public void getCustomerWithSmallestSum() {
+    public Map.Entry<Customer, Double> getCustomerWithSmallestSum() {
         var customersAndTotalSum = restaurantOrders.stream()
                 .collect(Collectors.groupingBy(Order::getCustomer,
                         Collectors.summingDouble(Order::getTotal)));
@@ -154,19 +158,33 @@ public class App {
                         (e1, e2) -> e1,
                         LinkedHashMap::new
                 ));
-        var result = keysAndValues.entrySet().stream()
+        return keysAndValues.entrySet().stream()
                 .findFirst()
                 .orElse(null);
-        System.out.println(result);
     }
 
-    public void getItemsAndCountOfSales() {
+    public Map<String, Integer> getItemsAndCountOfSales() {
         var soldItems = restaurantOrders.stream()
                 .flatMap(m -> m.getItems().stream())
                 .collect(Collectors.toList());
-        var result = soldItems.stream()
-                        .collect(Collectors.groupingBy(Item::getName, Collectors.summingInt(Item::getAmount)));
-        System.out.println(result);
+        return soldItems.stream()
+                .collect(Collectors.groupingBy(Item::getName, Collectors.summingInt(Item::getAmount)));
     }
 
+    public Map<String, List<String>> getEmailsByItems() {
+        Map<String, List<String>> result = new HashMap<>();
+        var soldItems = restaurantOrders.stream()
+                .flatMap(m -> m.getItems().stream())
+                .map(Item::getName)
+                .distinct()
+                .collect(Collectors.toList());
+        for (String targetDish : soldItems) {
+            var res = restaurantOrders.stream()
+                    .filter(order -> order.getItems().stream().anyMatch(item -> targetDish.equalsIgnoreCase(item.getName())))
+                    .map(order -> order.getCustomer().getEmail())
+                    .collect(Collectors.toList());
+            result.put(targetDish, res);
+        }
+        return result;
+    }
 }
